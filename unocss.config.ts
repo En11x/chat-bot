@@ -4,6 +4,7 @@ import {
   presetIcons,
   presetTypography,
   presetUno,
+  transformerVariantGroup
 } from 'unocss'
 
 export default defineConfig({
@@ -23,8 +24,10 @@ export default defineConfig({
       },
     }),
   ],
+  transformers:[transformerVariantGroup()],
   shortcuts: [{
     fc: 'flex justify-center',
     fb: 'flex justify-between',
+    fi: 'flex items-center'
   }],
 })

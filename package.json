@@ -23,6 +23,7 @@
     "@typescript-eslint/parser": "^5.56.0",
     "@unocss/preset-attributify": "^0.50.6",
     "@unocss/reset": "^0.50.6",
+    "@unocss/transformer-variant-group": "^0.50.6",
     "eslint": "^8.36.0",
     "eslint-plugin-astro": "^0.26.1",
     "unocss": "^0.50.6"
