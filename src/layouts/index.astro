@@ -23,3 +23,37 @@ const { title } = Astro.props
     <slot />
   </body>
 </html>
+
+<style is:global>
+  :root{
+    --c-bg:#fbfbfb;
+    --c-fg:#444444
+  }
+
+  html{
+    font-family: system-ui, sans-serif;
+    background-color: var(--c-bg);
+    color: var(--c-bg);
+  }
+
+  html.dark{
+    --c-bg: #212129;
+    --c-fg: #ddddf0
+  }
+
+  main{
+    max-width: 70ch;
+    margin: 0 auto;
+    padding: 6rem 2rem 4rem;
+  }
+</style>
+
+<script>
+  const initTheme = ()=>{
+    const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    const theme = localStorage.getItem('theme')
+    document.documentElement.classList.toggle('dark',theme?theme === 'dark':isDark)
+
+  }
+  initTheme()
+</script>

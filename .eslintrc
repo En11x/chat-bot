@@ -15,7 +15,7 @@
       "parserOptions": {
         "parser": "@typescript-eslint/parser",
         "extraFileExtensions": [".astro"]
-      },
+      }
     },
     {
       "files": ["**/*.astro/*.js", "*.astro/*.js"],
