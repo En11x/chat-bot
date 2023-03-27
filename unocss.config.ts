@@ -28,6 +28,7 @@ export default defineConfig({
   shortcuts: [{
     fc: 'flex justify-center',
     fb: 'flex justify-between',
-    fi: 'flex items-center'
+    fi: 'flex items-center',
+    link:'border-b hover:border-dashed border-(slate none)'
   }],
 })
