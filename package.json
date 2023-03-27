@@ -2,14 +2,15 @@
   "name": "chat-bot",
   "type": "module",
   "version": "0.0.1",
+  "packageManager": "pnpm@7.30.3",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "lint":"eslint . --ext .js,.jsx,.ts,.tsx,.astro",
-    "lint:fix":"eslint . --ext .js,.jsx,.ts,.tsx,.astro --fix"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.astro",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx,.astro --fix"
   },
   "dependencies": {
     "@astrojs/react": "^2.1.0",
@@ -20,6 +21,7 @@
     "react-dom": "^18.1.0"
   },
   "devDependencies": {
+    "@typescript-eslint/parser": "^5.56.0",
     "eslint": "^8.36.0",
     "eslint-plugin-astro": "^0.26.1"
   }
