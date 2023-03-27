@@ -18,13 +18,13 @@ export default defineConfig({
       cssExtend: {
         'ul,ol': {
           'padding-left': '2.25em',
-          position: 'relative',
+          'position': 'relative',
         },
       },
     }),
   ],
-  shortcuts:[{
-    'fc':'flex justify-center',
-    'fb': 'flex justify-between'
-  }]
+  shortcuts: [{
+    fc: 'flex justify-center',
+    fb: 'flex justify-between',
+  }],
 })

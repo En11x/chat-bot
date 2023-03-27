@@ -32,13 +32,13 @@
 </style>
 
 <script>
-  const handleToggleClick = ()=>{
+  const handleToggleClick = () => {
     const html = document.documentElement
     html.classList.toggle('dark')
     const hasDark = html.classList.contains('dark')
-    localStorage.setItem('theme',hasDark?'dark':'light')
+    localStorage.setItem('theme', hasDark ? 'dark' : 'light')
   }
   document
-  .getElementById('themeToggle')
-  .addEventListener('click', handleToggleClick)
+    .getElementById('themeToggle')
+    .addEventListener('click', handleToggleClick)
 </script>

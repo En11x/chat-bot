@@ -49,10 +49,10 @@ const { title } = Astro.props
 </style>
 
 <script>
-  const initTheme = ()=>{
+  const initTheme = () => {
     const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
     const theme = localStorage.getItem('theme')
-    document.documentElement.classList.toggle('dark',theme?theme === 'dark':isDark)
+    document.documentElement.classList.toggle('dark', theme ? theme === 'dark' : isDark)
 
   }
   initTheme()
