@@ -13,7 +13,7 @@ export default () => {
     content:'who are you?'
   }])
   const [error, setError] = useState<Errors>()
-  const [answer, serAnswer] = useState<string>('')
+  const [answer, serAnswer] = useState<string>('aaaaaaaaaaaaaaaaaaaaaaaaaaa')
 
   const addPrompt = () => {
     const inputValue = inputRef.current.value
@@ -29,48 +29,6 @@ export default () => {
     try {
       console.log(prompts, '?')
       return
-      const timestamp = Date.now()
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        body: JSON.stringify({
-          messages: prompts,
-          timestamp,
-          sign: generateSignature({
-            t: timestamp,
-            m: prompts[prompts.length - 1].content || '',
-          }),
-        }),
-      })
-      if (!response.ok) {
-        const error = await response.json()
-        console.error(error.error)
-        setError(error.error)
-        throw new Error('Request failed')
-      }
-      const data = response.body
-      if (!data) {
-        throw new Error('No data')
-      }
-
-      const reader = data.getReader()
-      const decoder = new TextDecoder('utf-8')
-      let done = false
-      let res = ''
-      while (!done) {
-        const { value, done: readDone } = await reader.read()
-        if (value) {
-          const char = decoder.decode(value)
-          if (char === '\n' && res.endsWith('\n')) {
-            continue
-          }
-          if (char) {
-            res += char
-          }
-        }
-        done = readDone
-      }
-      serAnswer((prev) => prev + res)
-      setLoading(false)
     } catch (error) {
       console.error(error)
       setLoading(false)
@@ -108,8 +66,8 @@ export default () => {
 
   return (
     <div className="my-6">
-      {prompts.map((prompt) => (
-        <Message role={prompt.role} message={prompt.content} />
+      {prompts.map((prompt,index) => (
+        <Message key={index} role={prompt.role} message={prompt.content} />
       ))}
       {answer && <Message role="assistant" message={answer} />}
       {error && <ErrorMsg error={error} />}
