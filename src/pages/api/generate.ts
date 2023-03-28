@@ -1,14 +1,18 @@
 import { APIRoute } from 'astro'
 import { verifySignature } from 'src/utils/auth'
-import { generatePayload } from 'src/utils/openAI'
+import { generatePayload, parseOpenAIStream } from 'src/utils/openAI'
 
 const apiKey = import.meta.env.OPENAI_API_KEY
-const baseUrl = (import.meta.env.OPENAI_API_BASE_URL || 'https://api.openai.com').trim().replace(/\/$/,'')
+const baseUrl = (
+  import.meta.env.OPENAI_API_BASE_URL || 'https://api.openai.com'
+)
+  .trim()
+  .replace(/\/$/, '')
 
 export const post: APIRoute = async (context) => {
   const body = await context.request.json()
   const { messages, timestamp, sign } = body
-  console.log(messages,'?')
+  console.log(messages, '?')
   if (!messages) {
     return new Response(
       JSON.stringify({
@@ -37,18 +41,23 @@ export const post: APIRoute = async (context) => {
     )
   }
 
-  const initOptions = generatePayload(apiKey,messages)
+  const initOptions = generatePayload(apiKey, messages)
 
-  const response:Response = await fetch(`${baseUrl}/v1/chat/completions`,initOptions).catch((err:Error)=>{
+  const response: Response = await fetch(
+    `${baseUrl}/v1/chat/completions`,
+    initOptions
+  ).catch((err: Error) => {
     console.error(err)
-    return new Response(JSON.stringify({
-      error:{
-        code:err.name,
-        messages:err.message
-      }
-    }),{status:500})
+    return new Response(
+      JSON.stringify({
+        error: {
+          code: err.name,
+          messages: err.message,
+        },
+      }),
+      { status: 500 }
+    )
   })
 
-  console.log(response,'response???')
-  return response
+  return parseOpenAIStream(response)
 }

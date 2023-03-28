@@ -3,12 +3,17 @@ import { Errors, Prompt } from 'src/types'
 import { generateSignature } from 'src/utils/auth'
 import IconClear from '../components/icons/Clear'
 import ErrorMsg from './Error'
+import { Message } from './Message'
 
 export default () => {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [loading, setLoading] = useState<boolean>(false)
-  const [prompts, setPrompt] = useState<Prompt[]>([])
+  const [prompts, setPrompt] = useState<Prompt[]>([{
+    role:'user',
+    content:'who are you?'
+  }])
   const [error, setError] = useState<Errors>()
+  const [answer, serAnswer] = useState<string>('')
 
   const addPrompt = () => {
     const inputValue = inputRef.current.value
@@ -23,6 +28,7 @@ export default () => {
     setLoading(true)
     try {
       console.log(prompts, '?')
+      return
       const timestamp = Date.now()
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -45,12 +51,34 @@ export default () => {
       if (!data) {
         throw new Error('No data')
       }
+
+      const reader = data.getReader()
+      const decoder = new TextDecoder('utf-8')
+      let done = false
+      let res = ''
+      while (!done) {
+        const { value, done: readDone } = await reader.read()
+        if (value) {
+          const char = decoder.decode(value)
+          if (char === '\n' && res.endsWith('\n')) {
+            continue
+          }
+          if (char) {
+            res += char
+          }
+        }
+        done = readDone
+      }
+      serAnswer((prev) => prev + res)
+      setLoading(false)
     } catch (error) {
       console.error(error)
       setLoading(false)
       return
     }
   }, [prompts])
+
+  // const arch
 
   const clear = () => {
     inputRef.current.value = ''
@@ -69,13 +97,21 @@ export default () => {
     []
   )
 
-  useEffect(()=>{
-    if(!prompts.length) return
+  useEffect(() => {
+    if (!prompts.length) return
     send()
-  },[prompts])
+  }, [prompts])
+
+  useEffect(() => {
+    console.log(answer)
+  }, [answer])
 
   return (
     <div className="my-6">
+      {prompts.map((prompt) => (
+        <Message role={prompt.role} message={prompt.content} />
+      ))}
+      {answer && <Message role="assistant" message={answer} />}
       {error && <ErrorMsg error={error} />}
       {loading ? (
         <div className="h-12 my-4 f-c-c gap-4 bg-(slate op-15) rounded-sm">

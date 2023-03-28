@@ -27,6 +27,7 @@
     "@unocss/transformer-variant-group": "^0.50.6",
     "eslint": "^8.36.0",
     "eslint-plugin-astro": "^0.26.1",
+    "eventsource-parser": "^1.0.0",
     "unocss": "^0.50.6"
   }
 }
