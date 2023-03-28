@@ -1,5 +1,6 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Errors, Prompt } from 'src/types'
+import { generateSignature } from 'src/utils/auth'
 import IconClear from '../components/icons/Clear'
 import ErrorMsg from './Error'
 
@@ -9,23 +10,29 @@ export default () => {
   const [prompts, setPrompt] = useState<Prompt[]>([])
   const [error, setError] = useState<Errors>()
 
-  const send = () => {
+  const addPrompt = () => {
     const inputValue = inputRef.current.value
     if (!inputValue) {
       return
     }
     inputRef.current.value = ''
     setPrompt((prompt) => [...prompt, { role: 'user', content: inputValue }])
-    requestOpenAI()
   }
 
-  const requestOpenAI = useCallback(async () => {
+  const send = useCallback(async () => {
     setLoading(true)
     try {
+      console.log(prompts, '?')
+      const timestamp = Date.now()
       const response = await fetch('/api/generate', {
         method: 'POST',
         body: JSON.stringify({
           messages: prompts,
+          timestamp,
+          sign: generateSignature({
+            t: timestamp,
+            m: prompts[prompts.length - 1].content || '',
+          }),
         }),
       })
       if (!response.ok) {
@@ -35,7 +42,7 @@ export default () => {
         throw new Error('Request failed')
       }
       const data = response.body
-      if(!data){
+      if (!data) {
         throw new Error('No data')
       }
     } catch (error) {
@@ -62,6 +69,11 @@ export default () => {
     []
   )
 
+  useEffect(()=>{
+    if(!prompts.length) return
+    send()
+  },[prompts])
+
   return (
     <div className="my-6">
       {error && <ErrorMsg error={error} />}
@@ -87,7 +99,7 @@ export default () => {
             }}
             onKeyDown={handleKeydown}
           ></textarea>
-          <button className="slate-btn" onClick={send}>
+          <button className="slate-btn" onClick={addPrompt}>
             Send
           </button>
           <button className="slate-btn" onClick={clear}>
