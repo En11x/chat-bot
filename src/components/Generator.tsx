@@ -8,12 +8,9 @@ import { Message } from './Message'
 export default () => {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [loading, setLoading] = useState<boolean>(false)
-  const [prompts, setPrompt] = useState<Prompt[]>([{
-    role:'user',
-    content:'who are you?'
-  }])
+  const [prompts, setPrompt] = useState<Prompt[]>([])
   const [error, setError] = useState<Errors>()
-  const [answer, serAnswer] = useState<string>('aaaaaaaaaaaaaaaaaaaaaaaaaaa')
+  const [answer, setAnswer] = useState<string>('')
 
   const addPrompt = () => {
     const inputValue = inputRef.current.value
@@ -27,8 +24,49 @@ export default () => {
   const send = useCallback(async () => {
     setLoading(true)
     try {
-      console.log(prompts, '?')
-      return
+      console.log(prompts, 'prompts?')
+      const timestamp = Date.now()
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        body: JSON.stringify({
+          messages: prompts,
+          timestamp,
+          sign: generateSignature({
+            t: timestamp,
+            m: prompts[prompts.length - 1].content || '',
+          }),
+        }),
+      })
+      if (!response.ok) {
+        const error = await response.json()
+        console.error(error.error)
+        setError(error.error)
+        throw new Error('Request failed')
+      }
+      const data = response.body
+      if (!data) {
+        throw new Error('No data')
+      }
+
+      const reader = data.getReader()
+      const decoder = new TextDecoder('utf-8')
+      let done = false
+      let res = ''
+      while (!done) {
+        const { value, done: readDone } = await reader.read()
+        if (value) {
+          const char = decoder.decode(value)
+          if (char === '\n' && res.endsWith('\n')) {
+            continue
+          }
+          if (char) {
+            res += char
+          }
+        }
+        done = readDone
+      }
+      setAnswer((prev) => prev + res)
+      setLoading(false)
     } catch (error) {
       console.error(error)
       setLoading(false)
@@ -61,7 +99,7 @@ export default () => {
   }, [prompts])
 
   useEffect(() => {
-    console.log(answer)
+    console.log(answer,'answer')
   }, [answer])
 
   return (
