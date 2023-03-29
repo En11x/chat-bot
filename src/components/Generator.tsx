@@ -11,6 +11,7 @@ export default () => {
   const [prompts, setPrompt] = useState<Prompt[]>([])
   const [error, setError] = useState<Errors>()
   const [answer, setAnswer] = useState<string>('')
+  const [controller, setController] = useState<AbortController>(null)
 
   const addPrompt = () => {
     const inputValue = inputRef.current.value
@@ -26,6 +27,8 @@ export default () => {
     try {
       console.log(prompts, 'prompts?')
       const timestamp = Date.now()
+      const controller = new AbortController()
+      setController(controller)
       const response = await fetch('/api/generate', {
         method: 'POST',
         body: JSON.stringify({
@@ -36,6 +39,7 @@ export default () => {
             m: prompts[prompts.length - 1].content || '',
           }),
         }),
+        signal: controller.signal,
       })
       if (!response.ok) {
         const error = await response.json()
@@ -70,15 +74,20 @@ export default () => {
     } catch (error) {
       console.error(error)
       setLoading(false)
+      setController(null)
       return
     }
   }, [prompts])
 
-  // const arch
-
   const clear = () => {
     inputRef.current.value = ''
     inputRef.current.style.height = 'auto'
+    setPrompt([])
+    setError(null)
+  }
+
+  const stop = () => {
+    controller && controller.abort()
   }
 
   const handleKeydown = useCallback(
@@ -99,12 +108,12 @@ export default () => {
   }, [prompts])
 
   useEffect(() => {
-    console.log(answer,'answer')
+    console.log(answer, 'answer')
   }, [answer])
 
   return (
     <div className="my-6">
-      {prompts.map((prompt,index) => (
+      {prompts.map((prompt, index) => (
         <Message key={index} role={prompt.role} message={prompt.content} />
       ))}
       {answer && <Message role="assistant" message={answer} />}
@@ -112,7 +121,10 @@ export default () => {
       {loading ? (
         <div className="h-12 my-4 f-c-c gap-4 bg-(slate op-15) rounded-sm">
           <span>AI is thinking...</span>
-          <div className="px-2 py-0.5 border border-slate rounded-md text-sm op-70 cursor-pointer hover:bg-slate/10">
+          <div
+            onClick={stop}
+            className="px-2 py-0.5 border border-slate rounded-md text-sm op-70 cursor-pointer hover:bg-slate/10"
+          >
             Stop
           </div>
         </div>

@@ -33,7 +33,7 @@ module.exports = {
     'no-console': ['error', { allow: ['error'] }],
     'react/display-name': 'off',
     'react-hooks/rules-of-hooks': 'off',
-    '@typescript-eslint/no-use-before-define': 'off'
+    '@typescript-eslint/no-use-before-define': 'off',
   },
   overrides: [
     {

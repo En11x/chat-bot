@@ -52,7 +52,7 @@ export const post: APIRoute = async (context) => {
       JSON.stringify({
         error: {
           code: err.name,
-          messages: err.message,
+          message: err.message,
         },
       }),
       { status: 500 }
