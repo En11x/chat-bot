@@ -95,9 +95,16 @@ export default () => {
       return
     }
     if (e.key === 'Enter') {
-      send()
+      addPrompt()
     }
   }, [])
+
+  const retry = () => {
+    if (!prompts.length) return
+    const lastPrompt = prompts.slice(-1)
+    const isAssistant = lastPrompt[0].role === 'assistant'
+    setPrompt(prev => (isAssistant ? prev.slice(0, -1) : prev.slice()))
+  }
 
   useEffect(() => {
     if (!prompts.length) return
@@ -114,7 +121,7 @@ export default () => {
         <Message key={index} role={prompt.role} message={prompt.content} />
       ))}
       {answer && <Message role='assistant' message={answer} />}
-      {error && <ErrorMsg error={error} />}
+      {error && <ErrorMsg error={error} onRetry={retry} />}
       {loading ? (
         <div className='h-12 my-4 f-c-c gap-4 bg-(slate op-15) rounded-sm'>
           <span>AI is thinking...</span>
