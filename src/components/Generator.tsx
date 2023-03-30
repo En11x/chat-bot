@@ -109,11 +109,21 @@ export default () => {
   useEffect(() => {
     if (!prompts.length) return
     send()
+    localStorage.setItem('prompts', JSON.stringify(prompts))
   }, [prompts])
 
   useEffect(() => {
     console.log(answer, 'answer')
   }, [answer])
+
+  useEffect(() => {
+    try {
+      const prompts = localStorage.getItem('prompts')
+      prompts && setPrompt(JSON.parse(prompts))
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
 
   return (
     <div className='my-6'>
