@@ -30,12 +30,23 @@ module.exports = {
   ignorePatterns,
   extends: ['plugin:astro/recommended'],
   rules: {
-    'no-console': ['error', { allow: ['error'] }],
+    // 'no-console': ['error', { allow: ['error'] }],
     'react/display-name': 'off',
     'react-hooks/rules-of-hooks': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
   },
   overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      parser: '@typescript-eslint/parser',
+      plugins:['@typescript-eslint'],
+      rules: {
+        '@typescript-eslint/consistent-type-definitions': [
+          'error',
+          'interface',
+        ], //优先使用interface
+      },
+    },
     {
       files: ['*.astro'],
       parser: 'astro-eslint-parser',

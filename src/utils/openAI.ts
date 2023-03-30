@@ -1,23 +1,20 @@
 import { Prompt } from 'src/types'
-import { ParsedEvent, ReconnectInterval,createParser } from 'eventsource-parser'
+import { ParsedEvent, ReconnectInterval, createParser } from 'eventsource-parser'
 
 const model = import.meta.env.OPENAI_API_MODEL || 'gpt-3.5-turbo'
 
-export const generatePayload = (
-  apiKey: string,
-  messages: Prompt[]
-): RequestInit => ({
+export const generatePayload = (apiKey: string, messages: Prompt[]): RequestInit => ({
   headers: {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${apiKey}`,
+    Authorization: `Bearer ${apiKey}`
   },
   method: 'POST',
   body: JSON.stringify({
     model,
     messages,
     temperature: 0.6,
-    stream: true,
-  }),
+    stream: true
+  })
 })
 
 export const parseOpenAIStream = (res: Response) => {
@@ -27,7 +24,7 @@ export const parseOpenAIStream = (res: Response) => {
   if (!res.ok) {
     return new Response(res.body, {
       status: res.status,
-      statusText: res.statusText,
+      statusText: res.statusText
     })
   }
 
@@ -61,10 +58,10 @@ export const parseOpenAIStream = (res: Response) => {
       }
 
       const parser = createParser(streamParser)
-      for await (const chunk of res.body as any){
+      for await (const chunk of res.body as any) {
         parser.feed(decoder.decode(chunk))
       }
-    },
+    }
   })
 
   return new Response(stream)
